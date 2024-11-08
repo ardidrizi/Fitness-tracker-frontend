@@ -1,35 +1,55 @@
-// import { useEffect, useState } from "react";
-// import { getUserProgress } from "../api"; // Adjust the import path as necessary
+import axios from "axios";
+import { useEffect, useState } from "react";
+import "./Dashboard.css";
 
-// const Dashboard = ({ username }) => {
-//   const [progress, setProgress] = useState(null);
+const Dashboard = ({ username }) => {
+  const [workouts, setWorkouts] = useState(null);
+  console.log(username);
 
-//   useEffect(() => {
-//     const fetchProgress = async () => {
-//       try {
-//         const userProgress = await getUserProgress(username);
-//         setProgress(userProgress);
-//       } catch (error) {
-//         console.error("Error fetching user progress:", error);
-//       }
-//     };
+  useEffect(() => {
+    const fetchWorkouts = async () => {
+      console.log("fetching workouts", username);
+      if (username) {
+        const workoutData = await axios.get(
+          `http://localhost:5005/api/${username}/workouts`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+        setWorkouts(workoutData.data);
+      }
+    };
 
-//     fetchProgress();
-//   }, [username]);
+    fetchWorkouts();
+  }, [username]);
 
-//   return (
-//     <div>
-//       <h2>Dashboard</h2>
-//       {progress ? (
-//         <div>
-//           <h3>Welcome, {username}!</h3>
-//           <p>Your progress: {progress}</p>
-//         </div>
-//       ) : (
-//         <p>Loading...</p>
-//       )}
-//     </div>
-//   );
-// };
+  return (
+    <div className="dashboard-container">
+      <header className="dashboard-header">
+        <h1>Welcome, {username}!</h1>
+      </header>
+      <main className="dashboard-main">
+        <section className="dashboard-section">
+          <h2>Your Workouts</h2>
+          {workouts ? (
+            <ul>
+              {workouts.map((workout) => (
+                <li key={workout.id}>{workout.duration}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>Loading workouts...</p>
+          )}
+        </section>
+        <section className="dashboard-section">
+          <h2>Statistics</h2>
+          {/* Add content for statistics */}
+        </section>
+      </main>
+    </div>
+  );
+};
 
-// export default Dashboard;
+export default Dashboard;
