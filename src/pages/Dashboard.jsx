@@ -14,6 +14,23 @@ const Dashboard = ({ username }) => {
     yoga: "🧘",
   };
 
+  const calculateProgress = (current, total) => {
+    return (current / total) * 100;
+  };
+
+  const getProgressColor = (percentage) => {
+    switch (true) {
+      case percentage >= 100:
+        return "green";
+      case percentage >= 70:
+        return "blue";
+      case percentage >= 50:
+        return "orange";
+      default:
+        return "red";
+    }
+  };
+
   useEffect(() => {
     const fetchProgress = async () => {
       if (username === "null" || username === "undefined") {
@@ -33,6 +50,15 @@ const Dashboard = ({ username }) => {
 
     fetchProgress();
   }, [username]);
+
+  // Progress api call here
+  const progress = {
+    weight: 80,
+    bodyFatPercentage: 20,
+    totalWorkouts: 5,
+    totalDuration: "2h 30m",
+    totalCalories: 500,
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100">
@@ -66,7 +92,49 @@ const Dashboard = ({ username }) => {
               Statistics
             </h2>
             {/* Add content for statistics */}
-            <p className="text-gray-500">Statistics content will go here.</p>
+            <p className="text-lg font-medium text-gray-700">
+              Total Workouts progress:
+              <div>{calculateProgress(progress.totalWorkouts, 10)}%</div>
+            </p>
+            <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
+              <div
+                className="h-4 rounded-full"
+                style={{
+                  width: `${calculateProgress(progress.totalWorkouts, 10)}%`,
+                  backgroundColor: getProgressColor(
+                    calculateProgress(progress.totalWorkouts, 10)
+                  ),
+                }}
+              ></div>
+            </div>
+            <p className="text-lg font-medium text-gray-700">
+              Duration: {progress.totalDuration}
+            </p>
+            <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
+              <div
+                className="h-4 rounded-full"
+                style={{
+                  width: `${calculateProgress(progress.totalDuration, 100)}%`,
+                  backgroundColor: getProgressColor(
+                    calculateProgress(progress.totalDuration, 100)
+                  ),
+                }}
+              ></div>
+            </div>
+            <p className="text-lg font-medium text-gray-700">
+              Calories Burned: {progress.totalCalories}
+            </p>
+            <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
+              <div
+                className="h-4 rounded-full"
+                style={{
+                  width: `${calculateProgress(progress.totalCalories, 1000)}%`,
+                  backgroundColor: getProgressColor(
+                    calculateProgress(progress.totalCalories, 1000)
+                  ),
+                }}
+              ></div>
+            </div>
           </section>
         </main>
       </div>
