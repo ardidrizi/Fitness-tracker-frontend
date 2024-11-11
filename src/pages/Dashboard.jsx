@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import axios from "axios";
 import { useEffect, useState } from "react";
-import "../styles/Dashboard.css";
 
 const Dashboard = ({ username }) => {
   const [workouts, setWorkouts] = useState(null);
@@ -36,30 +35,41 @@ const Dashboard = ({ username }) => {
   }, [username]);
 
   return (
-    <div className="dashboard-container">
-      <header className="dashboard-header">
-        <h1>Welcome, {username}!</h1>
-      </header>
-      <main className="dashboard-main">
-        <section className="dashboard-section">
-          <h2>Your Workouts</h2>
-          {workouts ? (
-            <ul>
-              {workouts.map((workout, index) => (
-                <h2 key={index}>
-                  {emoji[workout.workoutType]} {workout.workoutType}
-                </h2>
-              ))}
-            </ul>
-          ) : (
-            <p>Loading workouts...</p>
-          )}
-        </section>
-        <section className="dashboard-section">
-          <h2>Statistics</h2>
-          {/* Add content for statistics */}
-        </section>
-      </main>
+    <div className="min-h-screen flex flex-col items-center bg-gray-100">
+      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6 mt-10">
+        <header className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">
+            Welcome, {username}!
+          </h1>
+        </header>
+
+        <main className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <section className="bg-blue-50 p-6 rounded-lg shadow">
+            <h2 className="text-2xl font-semibold text-blue-600 mb-4">
+              Your Workouts
+            </h2>
+            {workouts ? (
+              <ul className="space-y-3">
+                {workouts.map((workout, index) => (
+                  <li key={index} className="text-lg font-medium text-gray-700">
+                    {emoji[workout.workoutType]} {workout.workoutType}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-500">Loading workouts...</p>
+            )}
+          </section>
+
+          <section className="bg-green-50 p-6 rounded-lg shadow">
+            <h2 className="text-2xl font-semibold text-green-600 mb-4">
+              Statistics
+            </h2>
+            {/* Add content for statistics */}
+            <p className="text-gray-500">Statistics content will go here.</p>
+          </section>
+        </main>
+      </div>
     </div>
   );
 };

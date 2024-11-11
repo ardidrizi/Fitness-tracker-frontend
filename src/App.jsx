@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import "./index.css";
+import Navbar from "./components/Navbar";
 
 function App() {
   const [username, setUsername] = useState(
@@ -25,24 +26,31 @@ function App() {
   }, [username, isLoggedIn]);
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route
-        path="/dashboard"
-        element={<Dashboard username={username} isLoggedIn={isLoggedIn} />}
+    <>
+      <Navbar
+        username={username}
+        isLoggedIn={isLoggedIn}
+        setIsLoggedIn={setIsLoggedIn}
       />
-      <Route
-        path="/login"
-        element={
-          <Login
-            username={username}
-            setUsername={setUsername}
-            isLoggedIn={isLoggedIn}
-          />
-        }
-      />
-      <Route path="/register" element={<Register />} />
-    </Routes>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route
+          path="/dashboard"
+          element={<Dashboard username={username} isLoggedIn={isLoggedIn} />}
+        />
+        <Route
+          path="/login"
+          element={
+            <Login
+              username={username}
+              setUsername={setUsername}
+              isLoggedIn={isLoggedIn}
+            />
+          }
+        />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </>
   );
 }
 

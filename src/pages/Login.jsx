@@ -2,7 +2,6 @@ import { useState } from "react";
 import Dashboard from "./Dashboard"; // Adjust the import path as necessary
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-// import "../styles/Login.css";
 
 const Login = ({ username, setUsername }) => {
   const [password, setPassword] = useState("");
@@ -79,7 +78,7 @@ const Login = ({ username, setUsername }) => {
             Login
           </button>
           <p className="text-center text-gray-600 mt-4">
-            Don't have an account?
+            Don&lsquo;t have an account?
           </p>
           <button
             className="w-full text-blue-500 font-semibold py-2 rounded-lg hover:text-blue-600 transition duration-300"
