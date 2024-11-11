@@ -1,28 +1,38 @@
+/* eslint-disable react/prop-types */
 import axios from "axios";
 import { useEffect, useState } from "react";
-import "./Dashboard.css";
+import "../styles/Dashboard.css";
 
 const Dashboard = ({ username }) => {
   const [workouts, setWorkouts] = useState(null);
   console.log(username);
 
+  const emoji = {
+    running: "🏃",
+    cycling: "🚴",
+    swimming: "🏊",
+    strength: "💪",
+    yoga: "🧘",
+  };
+
   useEffect(() => {
-    const fetchWorkouts = async () => {
-      console.log("fetching workouts", username);
-      if (username) {
-        const workoutData = await axios.get(
-          `http://localhost:5005/api/${username}/workouts`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-            },
-          }
-        );
-        setWorkouts(workoutData.data);
+    const fetchProgress = async () => {
+      if (username === "null" || username === "undefined") {
+        throw new Error("No user found");
       }
+
+      const workoutData = await axios.get(
+        `http://localhost:5005/api/${username}/workouts`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      setWorkouts(workoutData.data);
     };
 
-    fetchWorkouts();
+    fetchProgress();
   }, [username]);
 
   return (
@@ -35,8 +45,10 @@ const Dashboard = ({ username }) => {
           <h2>Your Workouts</h2>
           {workouts ? (
             <ul>
-              {workouts.map((workout) => (
-                <li key={workout.id}>{workout.duration}</li>
+              {workouts.map((workout, index) => (
+                <h2 key={index}>
+                  {emoji[workout.workoutType]} {workout.workoutType}
+                </h2>
               ))}
             </ul>
           ) : (
