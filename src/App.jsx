@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
-// import Register from "./pages/Register";
+import Register from "./pages/Register";
 
 function App() {
   const [username, setUsername] = useState(
@@ -12,6 +12,8 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("isLoggedIn") === "false" ? false : true
   );
+
+  console.log("setisLoggedIn:", setIsLoggedIn);
 
   useEffect(() => {
     localStorage.setItem("username", username);
@@ -38,7 +40,7 @@ function App() {
           />
         }
       />
-      {/* <Route path="/register" element={<Register />} /> */}
+      <Route path="/register" element={<Register />} />
     </Routes>
   );
 }

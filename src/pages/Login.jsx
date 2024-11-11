@@ -2,7 +2,7 @@ import { useState } from "react";
 import Dashboard from "./Dashboard"; // Adjust the import path as necessary
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./Login.css"; // Import the CSS file for styles
+import "../styles/Login.css"; // Import the CSS file for styles
 
 const Login = ({ username, setUsername }) => {
   const [password, setPassword] = useState("");
@@ -68,6 +68,11 @@ const Login = ({ username, setUsername }) => {
           </div>
           <button type="submit" className="login-button">
             Login
+          </button>
+
+          <p>Don't have an account?</p>
+          <button className="submit" onClick={() => navigate("/register")}>
+            Register
           </button>
         </form>
 
