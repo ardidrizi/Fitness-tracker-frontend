@@ -6,26 +6,48 @@ const Navbar = () => {
     { title: "Dashboard", path: "/dashboard" },
     { title: "About", path: "/about" },
     { title: "Contact", path: "/contact" },
+    { title: "Exercises", path: "/exercises/:id" }, // Added Exercises link with dynamic ID
   ];
 
   return (
     <nav className="bg-green-500 p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <div className="text-white text-lg font-bold">Fitness Tracker</div>
+        <NavLink
+          to="/"
+          activeClassName={({ isActive }) => (isActive ? "active" : "")}
+          className="text-white text-lg font-bold hover:text-gray-300"
+        >
+          Fitness Tracker
+        </NavLink>
         <ul className="flex space-x-4">
           {navLinks.map((link, index) => (
             <li key={index}>
               <NavLink
-                to={link.path}
+                to={link.path.replace(":id", "1")} // Replace ':id' with a specific ID, e.g., '1'
                 activeClassName={({ isActive }) => (isActive ? "active" : "")}
                 className="text-white hover:text-gray-300"
-                // onClick={handleLinkClick}
               >
                 {link.title}
               </NavLink>
             </li>
           ))}
         </ul>
+        <div className="flex space-x-4">
+          <NavLink
+            to="/login"
+            activeClassName={({ isActive }) => (isActive ? "active" : "")}
+            className="text-white hover:text-gray-300"
+          >
+            Login
+          </NavLink>
+          <NavLink
+            to="/register"
+            activeClassName={({ isActive }) => (isActive ? "active" : "")}
+            className="text-white hover:text-gray-300"
+          >
+            Signup
+          </NavLink>
+        </div>
       </div>
     </nav>
   );

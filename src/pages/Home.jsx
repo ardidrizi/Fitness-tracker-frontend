@@ -4,8 +4,9 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   const [exercise, setExercise] = useState("");
+  console.log("Exercise data:", exercise);
 
-  // const exerciseUrl = "https://exercisedb.p.rapidapi.com";
+  const exerciseUrl = "https://exercisedb.p.rapidapi.com";
   const apiKey = import.meta.env.VITE_EXERCISE_API_KEY;
 
   useEffect(() => {
@@ -34,18 +35,6 @@ const Home = () => {
       <p className="mb-4">
         Track your workouts, monitor your progress, and stay healthy!
       </p>
-      <div className="space-x-4">
-        <Link to="/login" className="bg-blue-500 text-white px-4 py-2 rounded">
-          Login
-        </Link>
-        <Link
-          to="/register"
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
-          Register
-        </Link>
-      </div>
-
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4">Popular Exercises</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -64,19 +53,6 @@ const Home = () => {
                   <h3 className="text-xl font-semibold mb-2">
                     {exercise.name}
                   </h3>
-                  <p className="text-gray-700 mb-1">
-                    <strong>Body Part:</strong> {exercise.bodyPart}
-                  </p>
-                  <p className="text-gray-700 mb-1">
-                    <strong>Equipment:</strong> {exercise.equipment}
-                  </p>
-                  <p className="text-gray-700 mb-1">
-                    <strong>Target:</strong> {exercise.target}
-                  </p>
-                  <p className="text-gray-700 mb-1">
-                    <strong>Secondary Muscles:</strong>{" "}
-                    {exercise.secondaryMuscles.join(", ")}
-                  </p>
                 </Link>
               ))
             : "Loading exercises..."}
