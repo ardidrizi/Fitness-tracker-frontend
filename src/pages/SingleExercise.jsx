@@ -2,28 +2,18 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-const EXERCISE_URL = "https://exercisedb.p.rapidapi.com/exercises";
-
 const SingleExercise = () => {
   const { exerciseId } = useParams();
   const [exercise, setExercise] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const apiKey = import.meta.env.VITE_EXERCISE_API_KEY;
-
   const fetchSingleExercise = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const { data } = await axios.get(
-        `${EXERCISE_URL}/exercise/${exerciseId}`,
-        {
-          headers: {
-            "x-rapidapi-key": apiKey,
-            "x-rapidapi-host": "exercisedb.p.rapidapi.com",
-          },
-        }
+        import.meta.env.VITE_SERVER_URL + `/api/exercises/${exerciseId}`
       );
       setExercise(data);
     } catch (error) {
@@ -32,7 +22,7 @@ const SingleExercise = () => {
     } finally {
       setLoading(false);
     }
-  }, [apiKey, exerciseId]);
+  }, [exerciseId]);
 
   useEffect(() => {
     fetchSingleExercise();

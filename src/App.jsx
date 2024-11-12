@@ -7,23 +7,18 @@ import Register from "./pages/Register";
 import "./index.css";
 import Navbar from "./components/Navbar";
 import SingleExercise from "./pages/SingleExercise";
+import AboutPage from "./pages/About page";
 
 function App() {
   const [username, setUsername] = useState(
     localStorage.getItem("username") || ""
   );
   const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem("isLoggedIn") === "false" ? false : true
+    localStorage.getItem("authToken") === "true" ? false : true
   );
-
-  console.log("setisLoggedIn:", setIsLoggedIn);
-
   useEffect(() => {
     localStorage.setItem("username", username);
     localStorage.setItem("isLoggedIn", isLoggedIn);
-
-    console.log("username:", username);
-    console.log("isLoggedIn:", isLoggedIn);
   }, [username, isLoggedIn]);
 
   return (
@@ -54,6 +49,7 @@ function App() {
           path="/exercises/exercise/:exerciseId"
           element={<SingleExercise />}
         />
+        <Route path="/about" element={<AboutPage />} />
       </Routes>
     </>
   );

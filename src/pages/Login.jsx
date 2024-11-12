@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Dashboard from "./Dashboard"; // Adjust the import path as necessary
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -7,11 +7,13 @@ const Login = ({ username, setUsername }) => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const navigate = useNavigate();
-  if (localStorage.getItem("authToken")) {
-    navigate("/dashboard");
-  }
+  const authToken = localStorage.getItem("authToken");
+  useEffect(() => {
+    if (authToken) {
+      navigate("/dashboard");
+    }
+  }, [authToken]);
 
   const fetchWorkouts = async () => {
     try {
