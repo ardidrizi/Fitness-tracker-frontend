@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import "./index.css";
 import Navbar from "./components/Navbar";
+import SingleExercise from "./pages/SingleExercise";
 
 function App() {
   const [username, setUsername] = useState(
@@ -49,6 +50,10 @@ function App() {
           }
         />
         <Route path="/register" element={<Register />} />
+        <Route
+          path="/exercises/exercise/:exerciseId"
+          element={<SingleExercise />}
+        />
       </Routes>
     </>
   );
