@@ -1,63 +1,63 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 
-const Home = () => {
-  const [exercise, setExercise] = useState("");
-  console.log("Exercise data:", exercise);
+const EXERCISE_URL = "https://exercisedb.p.rapidapi.com/exercises";
 
-  const exerciseUrl = "https://exercisedb.p.rapidapi.com";
+const Home = () => {
+  const [exercises, setExercises] = useState([]);
   const apiKey = import.meta.env.VITE_EXERCISE_API_KEY;
 
+  const fetchExercises = useCallback(async () => {
+    try {
+      const { data } = await axios.get(EXERCISE_URL, {
+        headers: {
+          "x-rapidapi-key": apiKey,
+          "x-rapidapi-host": "exercisedb.p.rapidapi.com",
+        },
+      });
+      setExercises(data);
+    } catch (error) {
+      console.error("Error fetching exercise data:", error);
+    }
+  }, [apiKey]);
+
   useEffect(() => {
-    const fetchExercise = async () => {
-      try {
-        const exerciseData = await axios.get(exerciseUrl + "/exercises", {
-          headers: {
-            "x-rapidapi-key": apiKey,
-            "x-rapidapi-host": "exercisedb.p.rapidapi.com",
-          },
-        });
-        console.log("Exercise data:", exerciseData.data);
-        setExercise(exerciseData.data);
-      } catch (error) {
-        console.error("Error fetching exercise data:", error);
-      }
-    };
-    fetchExercise();
-  }, [apiKey]); // re-run the effect when the apiKey changes
+    fetchExercises();
+  }, [fetchExercises]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-4xl font-bold mb-4">
-        Welcome to Health & Fitness Tracker
-      </h1>
-      <p className="mb-4">
-        Track your workouts, monitor your progress, and stay healthy!
-      </p>
-      <div className="mt-8">
+      <header className="text-center mb-4">
+        <h1 className="text-4xl font-bold">
+          Welcome to Health & Fitness Tracker
+        </h1>
+        <p>Track your workouts, monitor your progress, and stay healthy!</p>
+      </header>
+
+      <section className="mt-8 w-full max-w-5xl">
         <h2 className="text-2xl font-bold mb-4">Popular Exercises</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {exercise
-            ? exercise.map((exercise, index) => (
-                <Link
-                  to={`/exercise/${exercise.id}`}
-                  key={index}
-                  className="bg-white shadow-md rounded-lg p-6 block"
-                >
-                  <img
-                    src={exercise.gifUrl}
-                    alt={exercise.name}
-                    className="w-full h-48 object-cover rounded-lg mb-4"
-                  />
-                  <h3 className="text-xl font-semibold mb-2">
-                    {exercise.name}
-                  </h3>
-                </Link>
-              ))
-            : "Loading exercises..."}
+          {exercises.length > 0 ? (
+            exercises.map((exercise) => (
+              <Link
+                to={`exercises/exercise/${exercise.id}`}
+                key={exercise.id}
+                className="bg-white shadow-md rounded-lg p-6 block hover:shadow-lg transition"
+              >
+                <img
+                  src={exercise.gifUrl}
+                  alt={exercise.name}
+                  className="w-full h-48 object-cover rounded-lg mb-4"
+                />
+                <h3 className="text-xl font-semibold">{exercise.name}</h3>
+              </Link>
+            ))
+          ) : (
+            <p>Loading exercises...</p>
+          )}
         </div>
-      </div>
+      </section>
     </div>
   );
 };
