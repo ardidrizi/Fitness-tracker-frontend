@@ -1,99 +1,70 @@
-import { useEffect, useState } from "react";
-import Dashboard from "./Dashboard"; // Adjust the import path as necessary
-import axios from "axios";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const Login = ({ username, setUsername }) => {
+const Login = ({ setUsername, setIsLoggedIn }) => {
+  const [inputUsername, setInputUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  const authToken = localStorage.getItem("authToken");
-  useEffect(() => {
-    if (authToken) {
-      navigate("/dashboard");
-    }
-  }, [authToken]);
 
-  const fetchWorkouts = async () => {
+  const handleLogin = async () => {
+    if (!inputUsername || !password) {
+      setError("Please enter both username and password.");
+      return;
+    }
+
     try {
       const response = await axios.post("http://localhost:5005/auth/login", {
-        username,
-        email,
-        password,
+        username: inputUsername,
+        password: password,
       });
-      console.log("Login response:", response.data);
-      if (localStorage.getItem("authToken")) {
-        setIsLoggedIn(true);
-      }
-      localStorage.setItem("authToken", response.data.authToken);
-      setIsLoggedIn(true);
-      setUsername(response.data.username);
-      navigate("/dashboard");
-      if (response.data.authToken) {
-        localStorage.setItem("authToken", response.data.authToken);
-        setIsLoggedIn(true);
-      }
-    } catch (error) {
-      console.error("Error logging in:", error);
-    }
-  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    fetchWorkouts();
+      const { token, username } = response.data;
+
+      // Store auth token and login status in localStorage
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("username", username);
+      localStorage.setItem("isLoggedIn", "true");
+
+      // Update state with username and login status
+      setUsername(username);
+      setIsLoggedIn(true);
+
+      // Redirect to the dashboard
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Login failed. Please check your username and password.");
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+    <div className="login-container bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+      <div className="w-full max-w-xs bg-white p-6 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
           Login
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-gray-600 font-medium mb-1">
-              Email:
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-600 font-medium mb-1">
-              Password:
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-          >
-            Login
-          </button>
-          <p className="text-center text-gray-600 mt-4">
-            Don&lsquo;t have an account?
-          </p>
-          <button
-            className="w-full text-blue-500 font-semibold py-2 rounded-lg hover:text-blue-600 transition duration-300"
-            onClick={() => navigate("/register")}
-          >
-            Register
-          </button>
-        </form>
-        {isLoggedIn ? (
-          <Dashboard username={username} />
-        ) : (
-          <p className="text-center text-red-500 mt-4">Please log in.</p>
-        )}
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        <input
+          type="text"
+          placeholder="Username"
+          value={inputUsername}
+          onChange={(e) => setInputUsername(e.target.value)}
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
+        />
+        <button
+          onClick={handleLogin}
+          className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
+        >
+          Login
+        </button>
       </div>
     </div>
   );

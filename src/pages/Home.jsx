@@ -10,12 +10,6 @@ const Home = () => {
       const { data } = await axios.get(
         import.meta.env.VITE_SERVER_URL + "/api/exercises"
       );
-      // const { data } = await axios.get(EXERCISE_URL, {
-      //   headers: {
-      //     "x-rapidapi-key": apiKey,
-      //     "x-rapidapi-host": "exercisedb.p.rapidapi.com",
-      //   },
-      // });
       console.log("Exercise data:", data);
       setExercises(data);
     } catch (error) {
@@ -24,7 +18,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    fetchExercises();
+    // fetchExercises();
   }, [fetchExercises]);
 
   return (

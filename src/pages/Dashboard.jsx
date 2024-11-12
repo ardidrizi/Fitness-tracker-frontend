@@ -1,10 +1,9 @@
-/* eslint-disable react/prop-types */
 import axios from "axios";
 import { useEffect, useState } from "react";
 
 const Dashboard = ({ username }) => {
   const [workouts, setWorkouts] = useState(null);
-  console.log(username);
+  const [error, setError] = useState(null);
 
   const emoji = {
     running: "🏃",
@@ -15,48 +14,48 @@ const Dashboard = ({ username }) => {
   };
 
   const calculateProgress = (current, total) => {
-    return (current / total) * 100;
+    return Math.min((current / total) * 100, 100);
   };
 
   const getProgressColor = (percentage) => {
-    switch (true) {
-      case percentage >= 100:
-        return "green";
-      case percentage >= 70:
-        return "blue";
-      case percentage >= 50:
-        return "orange";
-      default:
-        return "red";
-    }
+    if (percentage >= 100) return "green";
+    if (percentage >= 70) return "blue";
+    if (percentage >= 50) return "orange";
+    return "red";
   };
 
   useEffect(() => {
     const fetchProgress = async () => {
-      if (username === "null" || username === "undefined") {
-        throw new Error("No user found");
+      if (!username || username === "null" || username === "undefined") {
+        setError("No user found");
+        return;
       }
 
-      const workoutData = await axios.get(
-        `http://localhost:5005/api/${username}/workouts`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        }
-      );
-      setWorkouts(workoutData.data);
+      try {
+        const response = await axios.get(
+          `http://localhost:5005/api/${username}/workouts`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+        setWorkouts(response.data);
+      } catch (err) {
+        console.error("Error fetching workouts:", err);
+        setError("Failed to load workouts.");
+      }
     };
 
     fetchProgress();
   }, [username]);
 
-  // Progress api call here
+  // Mocked progress data
   const progress = {
     weight: 80,
     bodyFatPercentage: 20,
     totalWorkouts: 5,
-    totalDuration: "2h 30m",
+    totalDuration: 150, // Duration in minutes
     totalCalories: 500,
   };
 
@@ -65,7 +64,7 @@ const Dashboard = ({ username }) => {
       <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6 mt-10">
         <header className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
-            Welcome, {username}!
+            Welcome, {username || "User"}!
           </h1>
         </header>
 
@@ -74,11 +73,13 @@ const Dashboard = ({ username }) => {
             <h2 className="text-2xl font-semibold text-blue-600 mb-4">
               Your Workouts
             </h2>
-            {workouts ? (
+            {error ? (
+              <p className="text-red-500">{error}</p>
+            ) : workouts ? (
               <ul className="space-y-3">
                 {workouts.map((workout, index) => (
                   <li key={index} className="text-lg font-medium text-gray-700">
-                    {emoji[workout.workoutType]} {workout.workoutType}
+                    {emoji[workout.workoutType] || "🏋️"} {workout.workoutType}
                   </li>
                 ))}
               </ul>
@@ -91,10 +92,8 @@ const Dashboard = ({ username }) => {
             <h2 className="text-2xl font-semibold text-green-600 mb-4">
               Statistics
             </h2>
-            {/* Add content for statistics */}
             <p className="text-lg font-medium text-gray-700">
-              Total Workouts progress:
-              <div>{calculateProgress(progress.totalWorkouts, 10)}%</div>
+              Total Workouts Progress:
             </p>
             <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
               <div
@@ -108,21 +107,21 @@ const Dashboard = ({ username }) => {
               ></div>
             </div>
             <p className="text-lg font-medium text-gray-700">
-              Duration: {progress.totalDuration}
+              Duration Progress:
             </p>
             <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
               <div
                 className="h-4 rounded-full"
                 style={{
-                  width: `${calculateProgress(progress.totalDuration, 100)}%`,
+                  width: `${calculateProgress(progress.totalDuration, 300)}%`,
                   backgroundColor: getProgressColor(
-                    calculateProgress(progress.totalDuration, 100)
+                    calculateProgress(progress.totalDuration, 300)
                   ),
                 }}
               ></div>
             </div>
             <p className="text-lg font-medium text-gray-700">
-              Calories Burned: {progress.totalCalories}
+              Calories Burned Progress:
             </p>
             <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
               <div
