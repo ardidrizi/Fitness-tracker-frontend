@@ -22,7 +22,7 @@ const Login = ({ username, setUsername }) => {
         email,
         password,
       });
-      console.log("Login response:", response.data);
+      "Login response:", response.data;
       if (localStorage.getItem("authToken")) {
         setIsLoggedIn(true);
       }

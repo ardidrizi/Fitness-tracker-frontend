@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const Dashboard = ({ username }) => {
   const [workouts, setWorkouts] = useState(null);
-  console.log(username);
+  username;
 
   const emoji = {
     running: "🏃",
@@ -94,7 +94,7 @@ const Dashboard = ({ username }) => {
             {/* Add content for statistics */}
             <p className="text-lg font-medium text-gray-700">
               Total Workouts progress:
-              <div>{calculateProgress(progress.totalWorkouts, 10)}%</div>
+              <span>{calculateProgress(progress.totalWorkouts, 10)}%</span>
             </p>
             <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
               <div

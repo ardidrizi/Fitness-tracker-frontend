@@ -16,7 +16,7 @@ const Home = () => {
       //     "x-rapidapi-host": "exercisedb.p.rapidapi.com",
       //   },
       // });
-      console.log("Exercise data:", data);
+      "Exercise data:", data;
       setExercises(data);
     } catch (error) {
       console.error("Error fetching exercise data:", error);

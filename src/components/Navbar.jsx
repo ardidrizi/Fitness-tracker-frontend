@@ -8,6 +8,7 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn }) => {
     { title: "About", path: "/about" },
     { title: "Contact", path: "/contact" },
     { title: "Exercises", path: "/exercises" },
+    { title: "Equipment", path: "/equipment" },
   ];
 
   return (

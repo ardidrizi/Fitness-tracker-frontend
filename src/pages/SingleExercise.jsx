@@ -32,7 +32,6 @@ const SingleExercise = () => {
     return <p className="text-center text-gray-500">Loading exercise...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
-  // Destructure exercise data for readability
   const {
     name,
     gifUrl,
