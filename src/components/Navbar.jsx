@@ -1,12 +1,14 @@
+import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 
-const Navbar = () => {
+const Navbar = ({ isLoggedIn, username, setIsLoggedIn }) => {
   const navLinks = [
     { title: "Home", path: "/" },
     { title: "Dashboard", path: "/dashboard" },
     { title: "About", path: "/about" },
     { title: "Contact", path: "/contact" },
     { title: "Exercises", path: "/exercises" },
+    { title: "Equipment", path: "/equipment" },
   ];
 
   return (
@@ -30,14 +32,29 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
-        <div className="flex space-x-4">
-          <NavLink to="/login" className="text-white hover:text-gray-300">
-            Login
-          </NavLink>
-          <NavLink to="/register" className="text-white hover:text-gray-300">
-            Signup
-          </NavLink>
-        </div>
+        {isLoggedIn ? (
+          <div className="flex space-x-4">
+            <span className="text-white">Welcome, {username}</span>
+            <button
+              className="text-white hover:text-gray-300"
+              onClick={() => {
+                setIsLoggedIn(false);
+                localStorage.removeItem("authToken");
+              }} // Remove the authToken from localStorage
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <div className="flex space-x-4">
+            <NavLink to="/login" className="text-white hover:text-gray-300">
+              Login
+            </NavLink>
+            <NavLink to="/register" className="text-white hover:text-gray-300">
+              Signup
+            </NavLink>
+          </div>
+        )}
       </div>
     </nav>
   );

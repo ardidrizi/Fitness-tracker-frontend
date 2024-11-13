@@ -17,7 +17,7 @@ const Register = () => {
         email,
         password,
       });
-      console.log("Registration successful", response.data);
+      "Registration successful", response.data;
       navigate("/login");
     } catch (error) {
       console.error("Error registering", error);
