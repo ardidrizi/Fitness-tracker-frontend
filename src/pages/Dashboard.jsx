@@ -1,11 +1,13 @@
 /* eslint-disable react/prop-types */
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useUserContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
-const Dashboard = ({ username }) => {
+const Dashboard = () => {
   const [workouts, setWorkouts] = useState(null);
-  username;
-
+  const { username, isLoggedIn } = useUserContext();
+  const navigate = useNavigate();
   const emoji = {
     running: "🏃",
     cycling: "🚴",
@@ -32,11 +34,11 @@ const Dashboard = ({ username }) => {
   };
 
   useEffect(() => {
-    const fetchProgress = async () => {
-      if (username === "null" || username === "undefined") {
-        throw new Error("No user found");
-      }
+    if (!isLoggedIn) navigate("/login");
+  }, [isLoggedIn]);
 
+  useEffect(() => {
+    const fetchProgress = async () => {
       const workoutData = await axios.get(
         `http://localhost:5005/api/${username}/workouts`,
         {

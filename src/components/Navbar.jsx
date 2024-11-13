@@ -1,16 +1,17 @@
-import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import { useUserContext } from "../context/UserContext";
 
-const Navbar = ({ isLoggedIn, username, setIsLoggedIn }) => {
+const Navbar = () => {
   const navLinks = [
     { title: "Home", path: "/" },
     { title: "Dashboard", path: "/dashboard" },
     { title: "About", path: "/about" },
-    { title: "Contact", path: "/contact" },
-    { title: "Exercises", path: "/exercises" },
-    { title: "Equipment", path: "/equipment" },
+    // { title: "Contact", path: "/contact" },
+    // { title: "Exercises", path: "/exercises" },
+    // { title: "Equipment", path: "/equipment" },
   ];
 
+  const { isLoggedIn, username, logUserOut } = useUserContext();
   return (
     <nav className="bg-green-500 p-4">
       <div className="container mx-auto flex justify-between items-center">
@@ -37,10 +38,7 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn }) => {
             <span className="text-white">Welcome, {username}</span>
             <button
               className="text-white hover:text-gray-300"
-              onClick={() => {
-                setIsLoggedIn(false);
-                localStorage.removeItem("authToken");
-              }} // Remove the authToken from localStorage
+              onClick={logUserOut}
             >
               Logout
             </button>

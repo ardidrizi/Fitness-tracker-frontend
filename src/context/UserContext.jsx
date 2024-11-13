@@ -1,30 +1,80 @@
-import { createContext, useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { createContext, useState, useContext, useEffect } from "react";
 
 // Define the context
-export const UserContext = createContext(null);
+const UserContext = createContext(null);
 
 // Custom hook for easier context access
-export const useUser = () => useContext(UserContext);
+export const useUserContext = () => useContext(UserContext);
 
-export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    // Load user from local storage if available
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+// Provider component
+export const UserContextProvider = ({ children }) => {
+  const [username, setUsername] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const authenticateUser = () => {
+    axios
+      .get(`${import.meta.env.VITE_SERVER_URL}/auth/verify`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((resp) => {
+        storeUsername(resp.data.username);
+        logUserIn();
+      })
+      .catch((err) => {
+        console.error(err);
+        logUserOut();
+      });
+  };
 
   useEffect(() => {
-    // Save user to local storage whenever it changes
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("user");
-    }
-  }, [user]);
+    authenticateUser();
+  }, []);
 
-  return (
-    <UserContext.Provider value={{ user, setUser }}>
-      {children}
-    </UserContext.Provider>
-  );
+  const storeToken = (token) => {
+    localStorage.setItem("authToken", token);
+  };
+
+  const getToken = () => {
+    return localStorage.getItem("authToken");
+  };
+
+  const removeToken = () => {
+    localStorage.removeItem("authToken");
+  };
+
+  const storeUsername = (username) => {
+    setUsername(username);
+  };
+
+  const clearUser = () => {
+    setUsername(null);
+  };
+
+  const logUserIn = () => {
+    setIsLoggedIn(true);
+  };
+
+  const logUserOut = () => {
+    setIsLoggedIn(false);
+    removeToken();
+  };
+
+  const values = {
+    username,
+    isLoggedIn,
+    storeToken,
+    getToken,
+    removeToken,
+    storeUsername,
+    clearUser,
+    logUserIn,
+    logUserOut,
+    authenticateUser,
+  };
+
+  console.log(getToken(), username, isLoggedIn);
+  return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
 };
