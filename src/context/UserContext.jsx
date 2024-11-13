@@ -9,29 +9,43 @@ export const useUserContext = () => useContext(UserContext);
 
 // Provider component
 export const UserContextProvider = ({ children }) => {
-  const [username, setUsername] = useState(null);
+  const [username, setUsername] = useState(() => {
+    // Get the username from localStorage if it exists
+    return localStorage.getItem("username") || null;
+  });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const authenticateUser = () => {
-    axios
-      .get(`${import.meta.env.VITE_SERVER_URL}/auth/verify`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((resp) => {
-        storeUsername(resp.data.username);
-        logUserIn();
-      })
-      .catch((err) => {
-        console.error(err);
-        logUserOut();
-      });
+  const authenticateUser = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/auth/verify`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      storeUsername(response.data.username);
+      console.log(
+        "Authentication successful, username:",
+        response.data.username
+      );
+      logUserIn();
+    } catch (error) {
+      console.error(
+        "Authentication failed:",
+        error.response ? error.response.data : error.message
+      );
+      logUserOut();
+    }
   };
 
   useEffect(() => {
-    authenticateUser();
-  }, []);
+    if (!getToken() && !username) {
+      authenticateUser();
+    }
+  }, [username]);
 
   const storeToken = (token) => {
     localStorage.setItem("authToken", token);
@@ -47,10 +61,12 @@ export const UserContextProvider = ({ children }) => {
 
   const storeUsername = (username) => {
     setUsername(username);
+    localStorage.setItem("username", username);
   };
 
   const clearUser = () => {
     setUsername(null);
+    localStorage.removeItem("username");
   };
 
   const logUserIn = () => {
@@ -60,6 +76,7 @@ export const UserContextProvider = ({ children }) => {
   const logUserOut = () => {
     setIsLoggedIn(false);
     removeToken();
+    clearUser();
   };
 
   const values = {
@@ -76,5 +93,6 @@ export const UserContextProvider = ({ children }) => {
   };
 
   console.log(getToken(), username, isLoggedIn);
+
   return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
 };

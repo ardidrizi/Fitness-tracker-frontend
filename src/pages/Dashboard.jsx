@@ -38,19 +38,21 @@ const Dashboard = () => {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    const fetchProgress = async () => {
-      const workoutData = await axios.get(
-        `http://localhost:5005/api/${username}/workouts`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        }
-      );
-      setWorkouts(workoutData.data);
-    };
+    if (username) {
+      const fetchProgress = async () => {
+        const workoutData = await axios.get(
+          `http://localhost:5005/api/${username}/workouts`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+        setWorkouts(workoutData.data);
+      };
 
-    fetchProgress();
+      fetchProgress();
+    }
   }, [username]);
 
   // Progress api call here

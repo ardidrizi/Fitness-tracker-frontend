@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
 
-const Login = ({ username, setUsername }) => {
+const Login = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const {
@@ -14,8 +14,12 @@ const Login = ({ username, setUsername }) => {
     getToken,
     storeToken,
     storeUsername,
+    username,
   } = useUserContext();
   const navigate = useNavigate();
+
+  const currentUsername = username;
+  storeUsername(currentUsername);
 
   const authToken = getToken();
   useEffect(() => {
@@ -40,7 +44,6 @@ const Login = ({ username, setUsername }) => {
         storeToken(response.data.authToken);
         storeUsername(response.data.username);
         logUserIn();
-        return;
         navigate("/dashboard");
       }
     } catch (error) {
@@ -51,6 +54,7 @@ const Login = ({ username, setUsername }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     handleLogin();
+    // storeUsername();
   };
 
   return (
