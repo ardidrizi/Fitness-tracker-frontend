@@ -84,6 +84,15 @@ const Register = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
               />
             </div>
+            <div>
+              {/* add a image for user  cloudinary*/}
+              <label
+                htmlFor="image"
+                className="block text-gray-600 font-medium mb-1"
+              >
+                Image: 2MB max
+              </label>
+            </div>
 
             <button
               type="submit"

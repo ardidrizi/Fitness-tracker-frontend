@@ -9,11 +9,17 @@ export const useUserContext = () => useContext(UserContext);
 
 // Provider component
 export const UserContextProvider = ({ children }) => {
-  const [username, setUsername] = useState(() => {
-    // Get the username from localStorage if it exists
-    return localStorage.getItem("username") || null;
-  });
+  const [username, setUsername] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const token = localStorage.getItem("authToken");
+
+  useEffect(() => {
+    console.log("AUTHENTICATE USER::::", getToken(), username);
+    if (!token || !username) {
+      console.log("AUTHENTICATE USER::::called!!");
+      authenticateUser();
+    }
+  }, [token, username]);
 
   const authenticateUser = async () => {
     try {
@@ -25,12 +31,7 @@ export const UserContextProvider = ({ children }) => {
           },
         }
       );
-
-      storeUsername(response.data.username);
-      console.log(
-        "Authentication successful, username:",
-        response.data.username
-      );
+      storeUsername(response.data.data.username);
       logUserIn();
     } catch (error) {
       console.error(
@@ -40,12 +41,6 @@ export const UserContextProvider = ({ children }) => {
       logUserOut();
     }
   };
-
-  useEffect(() => {
-    if (!getToken() && !username) {
-      authenticateUser();
-    }
-  }, [username]);
 
   const storeToken = (token) => {
     localStorage.setItem("authToken", token);
@@ -61,12 +56,12 @@ export const UserContextProvider = ({ children }) => {
 
   const storeUsername = (username) => {
     setUsername(username);
-    localStorage.setItem("username", username);
   };
 
   const clearUser = () => {
     setUsername(null);
     localStorage.removeItem("username");
+    localStorage.removeItem("authToken");
   };
 
   const logUserIn = () => {
@@ -91,8 +86,6 @@ export const UserContextProvider = ({ children }) => {
     logUserOut,
     authenticateUser,
   };
-
-  console.log(getToken(), username, isLoggedIn);
 
   return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
 };
