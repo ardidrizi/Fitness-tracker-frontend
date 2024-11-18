@@ -11,15 +11,18 @@ export const useUserContext = () => useContext(UserContext);
 export const UserContextProvider = ({ children }) => {
   const [username, setUsername] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [favorites, setFavorites] = useState([]);
   const token = localStorage.getItem("authToken");
 
   useEffect(() => {
-    console.log("AUTHENTICATE USER::::", getToken(), username);
     if (!token || !username) {
-      console.log("AUTHENTICATE USER::::called!!");
       authenticateUser();
     }
   }, [token, username]);
+
+  useEffect(() => {
+    if (token) getIdsUserFavorite();
+  }, [username]);
 
   const authenticateUser = async () => {
     try {
@@ -39,6 +42,39 @@ export const UserContextProvider = ({ children }) => {
         error.response ? error.response.data : error.message
       );
       logUserOut();
+    }
+  };
+
+  const getIdsUserFavorite = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/api/favorite`,
+        {
+          headers: { Authorization: `Bearer ${getToken()}` },
+        }
+      );
+      // console.log(">>>> WORKOUTS ::::", response.data.workouts);
+      const favoritePromises = response.data.workouts.map((workout) =>
+        getUserFavoriteExternalAPI(workout)
+      );
+      const favoritePromisesResponse = await Promise.all(favoritePromises);
+      setFavorites(favoritePromisesResponse.map((e) => e.data));
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    }
+  };
+
+  const getUserFavoriteExternalAPI = async (exerciseId) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/api/exer/` + exerciseId,
+        {
+          headers: { Authorization: `Bearer ${getToken()}` },
+        }
+      );
+      return response;
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
     }
   };
 
@@ -85,6 +121,7 @@ export const UserContextProvider = ({ children }) => {
     logUserIn,
     logUserOut,
     authenticateUser,
+    favorites,
   };
 
   return <UserContext.Provider value={values}>{children}</UserContext.Provider>;

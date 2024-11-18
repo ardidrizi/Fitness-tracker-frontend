@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [workouts, setWorkouts] = useState(null);
+  const [favorites, setFavorites] = useState([]);
   const { username, isLoggedIn } = useUserContext();
   const navigate = useNavigate();
   const emoji = {
@@ -52,6 +53,7 @@ const Dashboard = () => {
       };
 
       fetchProgress();
+      fetchFavorites();
     }
   }, [username]);
 
@@ -62,6 +64,21 @@ const Dashboard = () => {
     totalWorkouts: 5,
     totalDuration: "2h 30m",
     totalCalories: 500,
+  };
+
+  // Get the favorite workouts from the server for current user
+  const fetchFavorites = async () => {
+    try {
+      const response = await axios.get("http://localhost:5005/api/favorite", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+      console.log(response.data);
+      setFavorites(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

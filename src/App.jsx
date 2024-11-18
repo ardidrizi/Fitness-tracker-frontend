@@ -8,7 +8,8 @@ import Navbar from "./components/Navbar";
 import SingleExercise from "./pages/SingleExercise";
 import AboutPage from "./pages/AboutPage";
 import { UserContextProvider } from "./context/UserContext";
-import Exercises from "./pages/Exercises";
+import Favorites from "./pages/Favorites";
+// import Exercises from "./pages/Exercises";
 
 function App() {
   return (
@@ -25,7 +26,8 @@ function App() {
             path="/exercises/exercise/:exerciseId"
             element={<SingleExercise />}
           />
-          <Route path="/exercises" element={<Exercises />} />
+          {/* <Route path="/exercises" element={<Exercises />} /> */}
+          <Route path="/favorites" element={<Favorites />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="*" element={<h1>Not Found</h1>} />
         </Routes>

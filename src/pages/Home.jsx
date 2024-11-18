@@ -3,11 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 
 const Home = () => {
   const [exercises, setExercises] = useState([]);
-  console.log(exercises);
   const token = localStorage.getItem("authToken");
-
-  // const workoutId = exercises.map((exercise) => exercise.id);
-  // console.log(workoutId);
 
   const fetchExercises = useCallback(async () => {
     try {
@@ -20,15 +16,10 @@ const Home = () => {
         }
       );
       setExercises(data.results);
-      console.log(data.results);
     } catch (error) {
       console.error(error);
     }
-  }, []);
-
-  useEffect(() => {
-    fetchExercises();
-  }, [fetchExercises]);
+  }, [token]);
 
   useEffect(() => {
     fetchExercises();
@@ -45,27 +36,32 @@ const Home = () => {
     try {
       const response = await axios.post(
         "http://localhost:5005/api/favorite",
-        { workoutId }, // Send the workoutId in the request body
+        { workoutId },
         {
           headers: {
             Authorization: `Bearer ${token}`, // Send the JWT token in the Authorization header
           },
-          limit: 10,
         }
       );
 
-      // Handle the response
       console.log("Workout added to favorites:", response.data);
     } catch (error) {
-      console.error(
-        "Error adding to favorites:",
-        error.response ? error.response.data : error
-      );
+      if (
+        error.response &&
+        error.response.data.message === "Workout already favorited"
+      ) {
+        alert("This workout is already in your favorites!");
+      } else {
+        console.error(
+          "Error adding to favorites:",
+          error.response ? error.response.data : error
+        );
+      }
     }
   };
 
-  const handleExercises = () => {
-    console.log("Add to workout");
+  const handleExercises = (workoutId) => {
+    console.log(`Adding workout ID: ${workoutId}`);
     addToFavorites(workoutId);
   };
 
@@ -99,10 +95,10 @@ const Home = () => {
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
                 <button
-                  onClick={handleExercises}
+                  onClick={() => handleExercises(exercise.id)}
                   className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded"
                 >
-                  Add to Workout
+                  Add to Favorite
                 </button>
               </div>
             ))}
