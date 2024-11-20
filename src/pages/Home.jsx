@@ -75,7 +75,7 @@ const Home = () => {
           Track your workouts, monitor your progress, and stay healthy!
         </p>
       </header>
-      {exercises.length > 0 ? (
+      {exercises && exercises.length > 0 ? (
         <section className="mt-8 w-full max-w-5xl">
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
             Popular Exercises
