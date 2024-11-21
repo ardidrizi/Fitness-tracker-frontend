@@ -44,9 +44,10 @@ const About = () => {
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">Join the Community</h2>
       <p className="text-lg mb-6">
-        [App Name] isn’t just an app; it’s a community of individuals dedicated
-        to health, fitness, and personal growth. Connect with others, share your
-        progress, and inspire one another to reach new milestones.
+        Fitness&Health tracker isn’t just an app; it’s a community of
+        individuals dedicated to health, fitness, and personal growth. Connect
+        with others, share your progress, and inspire one another to reach new
+        milestones.
       </p>
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">Our Vision</h2>

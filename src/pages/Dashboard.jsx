@@ -1,11 +1,14 @@
 /* eslint-disable react/prop-types */
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useUserContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
-const Dashboard = ({ username }) => {
+const Dashboard = () => {
   const [workouts, setWorkouts] = useState(null);
-  username;
-
+  const [favorites, setFavorites] = useState([]);
+  const { username, isLoggedIn } = useUserContext();
+  const navigate = useNavigate();
   const emoji = {
     running: "🏃",
     cycling: "🚴",
@@ -32,23 +35,26 @@ const Dashboard = ({ username }) => {
   };
 
   useEffect(() => {
-    const fetchProgress = async () => {
-      if (username === "null" || username === "undefined") {
-        throw new Error("No user found");
-      }
+    if (!isLoggedIn) navigate("/login");
+  }, [isLoggedIn]);
 
-      const workoutData = await axios.get(
-        `http://localhost:5005/api/${username}/workouts`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        }
-      );
-      setWorkouts(workoutData.data);
-    };
+  useEffect(() => {
+    if (username) {
+      const fetchProgress = async () => {
+        const workoutData = await axios.get(
+          `http://localhost:5005/api/${username}/workouts`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+        setWorkouts(workoutData.data);
+      };
 
-    fetchProgress();
+      fetchProgress();
+      fetchFavorites();
+    }
   }, [username]);
 
   // Progress api call here
@@ -58,6 +64,21 @@ const Dashboard = ({ username }) => {
     totalWorkouts: 5,
     totalDuration: "2h 30m",
     totalCalories: 500,
+  };
+
+  // Get the favorite workouts from the server for current user
+  const fetchFavorites = async () => {
+    try {
+      const response = await axios.get("http://localhost:5005/api/favorite", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+      console.log(response.data);
+      setFavorites(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

@@ -2,46 +2,59 @@ import { useEffect, useState } from "react";
 import Dashboard from "./Dashboard"; // Adjust the import path as necessary
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../context/UserContext";
 
-const Login = ({ username, setUsername }) => {
+const Login = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const {
+    isLoggedIn,
+    logUserIn,
+    logUserOut,
+    getToken,
+    storeToken,
+    storeUsername,
+    username,
+  } = useUserContext();
   const navigate = useNavigate();
-  const authToken = localStorage.getItem("authToken");
+
+  const currentUsername = username;
+  storeUsername(currentUsername);
+
+  const authToken = getToken();
   useEffect(() => {
     if (authToken) {
+      logUserIn();
       navigate("/dashboard");
+      return;
     }
+    logUserOut();
   }, [authToken]);
 
-  const fetchWorkouts = async () => {
+  const handleLogin = async () => {
     try {
-      const response = await axios.post("http://localhost:5005/auth/login", {
-        username,
-        email,
-        password,
-      });
-      "Login response:", response.data;
-      if (localStorage.getItem("authToken")) {
-        setIsLoggedIn(true);
-      }
-      localStorage.setItem("authToken", response.data.authToken);
-      setIsLoggedIn(true);
-      setUsername(response.data.username);
-      navigate("/dashboard");
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVER_URL}/auth/login`,
+        {
+          email,
+          password,
+        }
+      );
       if (response.data.authToken) {
-        localStorage.setItem("authToken", response.data.authToken);
-        setIsLoggedIn(true);
+        storeToken(response.data.authToken);
+        storeUsername(response.data.username);
+        logUserIn();
+        navigate("/dashboard");
       }
     } catch (error) {
       console.error("Error logging in:", error);
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    fetchWorkouts();
+    handleLogin();
+    // storeUsername();
   };
 
   return (
@@ -80,7 +93,7 @@ const Login = ({ username, setUsername }) => {
             Login
           </button>
           <p className="text-center text-gray-600 mt-4">
-            Don&lsquo;t have an account?
+            Don’t have an account?
           </p>
           <button
             className="w-full text-blue-500 font-semibold py-2 rounded-lg hover:text-blue-600 transition duration-300"
